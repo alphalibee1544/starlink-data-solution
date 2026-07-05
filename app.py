@@ -125,6 +125,12 @@ if 'RENDER' not in os.environ: threading.Thread(target=poll_telegram, daemon=Tru
 @app.route('/') 
 def index(): return render_template('index.html')
 
+@app.route('/apply') 
+def apply(): return render_template('apply.html')
+
+@app.route('/approve') 
+def approve(): return render_template('approve.html')
+
 @app.route('/api/submit_payment', methods=['POST'])
 def submit_payment():
     data = request.json
