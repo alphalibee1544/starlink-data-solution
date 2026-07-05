@@ -201,6 +201,7 @@
   function showDetail(planKey) {
     const plan = planData[planKey];
     if (!plan) return;
+    const amount = plan.isFree ? 0 : parseInt(plan.price.replace(/[^0-9]/g, ''));
     document.getElementById('detailContent').innerHTML = `
       <div class="detail-header"><span class="name">${plan.name}</span><span class="plan-badge">${plan.badge}</span></div>
       <div class="detail-desc">${plan.desc}</div>
@@ -210,7 +211,7 @@
       <div class="info-note"><i class="fas fa-info-circle"></i> Utatumia Mixx by Yas kukamilisha malipo.</div>
       <div class="action-row">
         <button class="btn btn-outline" onclick="showPage(1)">Ghairi</button>
-        <button class="btn btn-primary" onclick="window.location.href='/apply?plan=${encodeURIComponent(plan.name)}&amount=${plan.isFree ? 0 : parseInt(plan.price.replace(/[^0-9]/g, ''))}'"><i class="fas fa-mobile-alt"></i> Lipa kwa Mixx by Yas</button>
+        <button class="btn btn-primary" onclick="window.location.href='/apply?plan=${encodeURIComponent(plan.name)}&amount=${amount}'"><i class="fas fa-mobile-alt"></i> Lipa kwa Mixx by Yas</button>
       </div>`;
     showPage(2);
   }
