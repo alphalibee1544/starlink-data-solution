@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Starlink · Mixx by Yas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background: #0a0e1a; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px 12px; }
+    .phone-frame { max-width: 390px; width: 100%; background: #0d1117; border-radius: 32px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); overflow: hidden; }
+    .inner-content { padding: 20px 16px 24px; background: #0d1117; }
+    .screen { display: none; } .screen.active { display: block; }
+    .nav-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px; }
+    .step-dots { display: flex; gap: 8px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #2d3748; transition: 0.2s; }
+    .dot.active { background: #FFD100; width: 24px; border-radius: 12px; }
+    .step-label { font-size: 0.65rem; font-weight: 600; color: #8b95a9; letter-spacing: 0.3px; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+    .page-title { font-size: 1.3rem; font-weight: 700; color: #ffffff; letter-spacing: -0.3px; }
+    .page-title i { color: #FFD100; margin-right: 4px; }
+    .data-badge { background: #1a202c; padding: 4px 12px; border-radius: 30px; font-size: 0.6rem; font-weight: 700; color: #8b95a9; border: 1px solid #2d3748; }
+    .sub-title { font-size: 0.8rem; color: #8b95a9; margin: 2px 0 10px 0; line-height: 1.3; }
+    .powered-yas { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; font-size: 0.8rem; color: #c5cdd8; background: #1a202c; padding: 8px 14px; border-radius: 30px; border: 1px solid #2d3748; }
+    .powered-yas .yas-text { background: #00377D; padding: 2px 10px; border-radius: 30px; font-weight: 700; font-size: 0.7rem; color: #ffffff; }
+    .powered-yas .mixx-text { background: #FFD100; padding: 2px 10px; border-radius: 30px; font-weight: 700; font-size: 0.7rem; color: #00377D; }
+    .powered-yas .from-text { font-weight: 400; color: #8b95a9; font-size: 0.7rem; }
+    .section-label { font-weight: 700; font-size: 0.75rem; color: #8b95a9; letter-spacing: 0.5px; margin: 10px 0 10px 0; }
+    .plan-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+    .plan-card { border-radius: 16px; padding: 16px 10px 14px; text-align: center; cursor: pointer; transition: all 0.3s; text-decoration: none; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); min-height: 155px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); background: linear-gradient(135deg, #0d1a2b, #162a44); }
+    .plan-card .starlink-sat { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 0; opacity: 0.2; width: 130px; height: 80px; }
+    .plan-card .sat-body { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 35px; height: 20px; background: linear-gradient(180deg, rgba(180, 200, 255, 0.4), rgba(100, 130, 200, 0.2)); border-radius: 3px; border: 1px solid rgba(180, 200, 255, 0.15); }
+    .plan-card .sat-panel-l { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 45px; background: linear-gradient(180deg, rgba(100, 180, 255, 0.2), rgba(50, 100, 200, 0.1)); border: 1px solid rgba(100, 180, 255, 0.1); border-radius: 2px; margin-left: -30px; }
+    .plan-card .sat-panel-r { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 45px; background: linear-gradient(180deg, rgba(100, 180, 255, 0.2), rgba(50, 100, 200, 0.1)); border: 1px solid rgba(100, 180, 255, 0.1); border-radius: 2px; margin-left: 10px; }
+    .plan-card .sat-dish { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 8px; background: rgba(180, 200, 255, 0.15); border-radius: 2px 2px 0 0; margin-top: -14px; border: 1px solid rgba(180, 200, 255, 0.08); }
+    .plan-card .sat-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 70px; background: radial-gradient(ellipse, rgba(255, 209, 0, 0.06) 0%, transparent 70%); pointer-events: none; }
+    .plan-card .ring { position: absolute; border: 1px solid rgba(255, 209, 0, 0.06); border-radius: 50%; pointer-events: none; animation: ring-pulse 3s ease-in-out infinite; z-index: 0; }
+    .plan-card .ring.r1 { width: 60px; height: 60px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 0s; }
+    .plan-card .ring.r2 { width: 80px; height: 80px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 1s; }
+    .plan-card .ring.r3 { width: 100px; height: 100px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 2s; }
+    @keyframes ring-pulse { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); } 50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.3); } }
+    .plan-card .star { position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; opacity: 0.3; pointer-events: none; z-index: 0; animation: twinkle 2.5s ease-in-out infinite; }
+    @keyframes twinkle { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.7; } }
+    .plan-card:hover { border-color: rgba(255, 209, 0, 0.4); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); }
+    .plan-card:hover .starlink-sat { opacity: 0.35; }
+    .plan-card:active { transform: scale(0.95); }
+    .plan-card .user-type { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px; position: relative; z-index: 2; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
+    .plan-card .user-type.new-users { color: #7ec8e3; }
+    .plan-card .user-type.light-users { color: #ffffff; }
+    .plan-card .user-type.balanced { color: #ffffff; }
+    .plan-card .user-type.heavy-use { color: #ffffff; }
+    .plan-card .user-type.most-popular { color: #00377D; background: #FFD100; padding: 2px 12px; border-radius: 30px; display: inline-block; font-size: 0.5rem; box-shadow: 0 0 20px rgba(255, 209, 0, 0.3); text-shadow: none; margin-bottom: 4px; }
+    .plan-card .user-type.five-g { color: #FFD100; font-size: 0.5rem; }
+    .plan-card .plan-name { font-weight: 700; font-size: 0.95rem; color: #ffffff; line-height: 1.2; position: relative; z-index: 2; text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7); }
+    .plan-card .plan-validity { font-size: 0.6rem; color: #ffffff; margin-top: 2px; position: relative; z-index: 2; text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7); }
+    .plan-card .plan-price { font-weight: 700; font-size: 0.9rem; color: #ffffff; margin-top: 4px; position: relative; z-index: 2; text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7); }
+    .plan-card .plan-price .currency { font-size: 0.55rem; font-weight: 400; color: #8899bb; margin-right: 2px; }
+    .plan-card .plan-price.free-trial { color: #7ec8e3; font-size: 0.7rem; font-weight: 600; }
+    .plan-card .view-details { font-size: 0.6rem; color: #667799; margin-top: 6px; transition: 0.3s; position: relative; z-index: 2; cursor: pointer; }
+    .plan-card .view-details i { font-size: 0.5rem; margin-left: 2px; transition: 0.3s; }
+    .plan-card:hover .view-details { color: #FFD100; }
+    .plan-card:hover .view-details i { transform: translateX(3px); }
+    .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .detail-header .name { font-size: 1.5rem; font-weight: 700; color: #ffffff; }
+    .detail-header .plan-badge { background: #1a202c; border-radius: 30px; padding: 4px 12px; font-size: 0.65rem; font-weight: 600; color: #8b95a9; border: 1px solid #2d3748; }
+    .detail-desc { font-size: 0.85rem; color: #8b95a9; margin: 4px 0 18px 0; line-height: 1.4; }
+    .price-box { background: #FFD100; border-radius: 20px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .price-box .label { font-weight: 600; color: #00377D; font-size: 0.85rem; }
+    .price-box .value { font-weight: 800; font-size: 1.8rem; color: #00377D; }
+    .price-box .value.free-trial { font-size: 1rem; font-weight: 700; color: #00377D; }
+    .validity-box { display: flex; justify-content: space-between; background: #1a202c; padding: 10px 16px; border-radius: 16px; margin: 6px 0 16px 0; border: 1px solid #2d3748; }
+    .validity-box span:first-child { color: #8b95a9; font-weight: 500; font-size: 0.85rem; }
+    .validity-box span:last-child { font-weight: 600; color: #ffffff; font-size: 0.85rem; }
+    .feature-list { list-style: none; background: #1a202c; border-radius: 16px; padding: 4px 0; margin: 14px 0 18px 0; border: 1px solid #2d3748; }
+    .feature-list li { padding: 10px 16px; border-bottom: 1px solid #2d3748; font-size: 0.85rem; color: #c5cdd8; display: flex; align-items: center; gap: 10px; }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-list li i { color: #FFD100; width: 16px; font-size: 0.9rem; }
+    .info-note { font-size: 0.75rem; color: #8b95a9; background: #1a202c; padding: 10px 14px; border-radius: 30px; margin: 6px 0 10px 0; border: 1px solid #2d3748; line-height: 1.4; }
+    .info-note i { color: #FFD100; margin-right: 4px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; transition: 0.15s; width: 100%; text-align: center; }
+    .btn-primary { background: #FFD100; color: #00377D; box-shadow: 0 2px 8px rgba(255, 209, 0, 0.3); }
+    .btn-primary:hover { background: #e6b800; }
+    .btn-outline { background: #1a202c; color: #c5cdd8; border: 1px solid #2d3748; }
+    .btn-outline:hover { background: #2d3748; }
+    .action-row { display: flex; gap: 10px; margin-top: 14px; }
+    .action-row .btn { flex: 1; }
+    .footer-dark { background: #1a202c; border-radius: 16px; padding: 12px 16px; margin-top: 6px; text-align: center; font-size: 0.7rem; color: #8b95a9; line-height: 1.5; border: 1px solid #2d3748; }
+    .footer-dark i { color: #FFD100; margin-right: 4px; }
+    @media (max-width: 420px) {
+      .phone-frame { border-radius: 24px; }
+      .inner-content { padding: 16px 12px 20px; }
+      .page-title { font-size: 1.1rem; }
+      .plan-card { min-height: 135px; padding: 12px 8px; }
+      .plan-card .plan-name { font-size: 0.8rem; }
+      .plan-card .plan-price { font-size: 0.8rem; }
+      .plan-card .view-details { font-size: 0.5rem; }
+      .plan-card .starlink-sat { transform: translate(-50%, -50%) scale(0.7); }
+      .plan-card .user-type { font-size: 0.45rem; }
+      .powered-yas { padding: 6px 12px; }
+      .price-box .value { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="inner-content">
+
+    <div class="nav-progress">
+      <div class="step-dots">
+        <span class="dot active" id="dot1"></span>
+        <span class="dot" id="dot2"></span>
+      </div>
+      <span class="step-label" id="stepLabel">Hatua 1 ya 2 · Mipango</span>
+    </div>
+
+    <div id="page1" class="screen active">
+      
+      <div class="page-header">
+        <div class="page-title"><i class="fas fa-satellite-dish"></i> Starlink kwa Simu</div>
+        <span class="data-badge">Mipango ya Data</span>
+      </div>
+      
+      <div class="sub-title">Data ya satelaiti ya haraka na ya kuaminika — lipa kupitia Mixx by Yas</div>
+      
+      <div class="powered-yas">
+        <span>Inaendeshwa na</span>
+        <span class="yas-text">Yas</span>
+        <span class="mixx-text">Mixx</span>
+        <span class="from-text">by</span>
+      </div>
+      
+      <div class="section-label">CHAGUA MPANGO WAKO</div>
+      
+      <div class="plan-grid">
+        <a href="#" class="plan-card" onclick="showDetail('free')">
+          <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
+          <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+          <div class="star" style="top:12%;left:8%;animation-delay:0s;"></div><div class="star" style="top:78%;left:85%;animation-delay:0.6s;"></div><div class="star" style="top:32%;right:8%;animation-delay:1.2s;"></div><div class="star" style="top:88%;left:12%;animation-delay:1.8s;"></div>
+          <div class="user-type new-users">★ WATUMIAJI WAPYA</div>
+          <div class="plan-name">Data 2.5GB</div><div class="plan-validity">Mpango wa Siku 2</div>
+          <div class="plan-price free-trial">⭐ JARIBIO BURE</div>
+          <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
+        </a>
+        <a href="#" class="plan-card" onclick="showDetail('light')">
+          <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
+          <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+          <div class="star" style="top:18%;left:72%;animation-delay:0.3s;"></div><div class="star" style="top:62%;left:8%;animation-delay:0.9s;"></div><div class="star" style="top:82%;left:68%;animation-delay:1.5s;"></div><div class="star" style="top:8%;right:22%;animation-delay:2.1s;"></div>
+          <div class="user-type light-users">WATUMIAJI WACHACHE</div>
+          <div class="plan-name">Data 5GB</div><div class="plan-validity">Mpango wa Siku 3</div>
+          <div class="plan-price"><span class="currency">TSh</span> 2,500</div>
+          <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
+        </a>
+        <a href="#" class="plan-card" onclick="showDetail('balanced')">
+          <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
+          <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+          <div class="star" style="top:6%;right:14%;animation-delay:0.2s;"></div><div class="star" style="top:42%;left:6%;animation-delay:0.8s;"></div><div class="star" style="top:72%;right:10%;animation-delay:1.4s;"></div><div class="star" style="top:22%;left:82%;animation-delay:2s;"></div>
+          <div class="user-type balanced">WASILIANI</div>
+          <div class="plan-name">Data 15GB</div><div class="plan-validity">Mpango wa Siku 7</div>
+          <div class="plan-price"><span class="currency">TSh</span> 7,000</div>
+          <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
+        </a>
+        <a href="#" class="plan-card" onclick="showDetail('heavy')">
+          <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
+          <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+          <div class="star" style="top:22%;right:6%;animation-delay:0.4s;"></div><div class="star" style="top:52%;left:14%;animation-delay:1s;"></div><div class="star" style="top:82%;right:20%;animation-delay:1.6s;"></div><div class="star" style="top:12%;left:58%;animation-delay:2.2s;"></div>
+          <div class="user-type heavy-use">MATUMIZI MAKUBWA</div>
+          <div class="plan-name">Data 35GB</div><div class="plan-validity">Mpango wa Siku 14</div>
+          <div class="plan-price"><span class="currency">TSh</span> 15,000</div>
+          <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
+        </a>
+        <a href="#" class="plan-card popular" onclick="showDetail('popular')" style="border-color: rgba(255, 209, 0, 0.3);">
+          <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
+          <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+          <div class="star" style="top:10%;left:12%;animation-delay:0.1s;"></div><div class="star" style="top:62%;right:6%;animation-delay:0.7s;"></div><div class="star" style="top:38%;left:78%;animation-delay:1.3s;"></div><div class="star" style="top:72%;left:32%;animation-delay:1.9s;"></div>
+          <div class="user-type most-popular">⭐ KINACHOUMBWA SANA</div>
+          <div class="plan-name">Mwezi Bila Kikomo</div><div class="plan-validity">Mpango wa Siku 30</div>
+          <div class="plan-price"><span class="currency">TSh</span> 25,000</div>
+          <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
+        </a>
+        <a href="#" class="plan-card" onclick="showDetail('5g')">
+          <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
+          <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+          <div class="star" style="top:28%;left:4%;animation-delay:0.2s;"></div><div class="star" style="top:48%;right:4%;animation-delay:0.8s;"></div><div class="star" style="top:78%;left:24%;animation-delay:1.4s;"></div><div class="star" style="top:18%;right:28%;animation-delay:2s;"></div>
+          <div class="user-type five-g">★ COVERAGE YA 5G</div>
+          <div class="plan-name">5G Mwezi Bila Kikomo</div><div class="plan-validity">Mpango wa Siku 30</div>
+          <div class="plan-price"><span class="currency">TSh</span> 35,000</div>
+          <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
+        </a>
+      </div>
+      
+      <div class="footer-dark">
+        <i class="fas fa-shield-alt"></i> Kuchagua mpango kutakupeleka kwenye ukurasa salama wa Mixx by Yas.<br>
+        Mpango wako wa Starlink kwa Simu utaamilishwa mara baada ya malipo.
+      </div>
+    </div>
+
+    <div id="page2" class="screen">
+      <div id="detailContent"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const planData = {
+    free: { name: 'Data 2.5GB', badge: 'Siku 2', desc: 'Njia bora ya kujaribu huduma yetu. Pata data 2.5GB ya kuanza kutumia Starlink.', price: '⭐ JARIBIO BURE', priceClass: 'free-trial', validity: 'Siku 2', features: ['Data 2.5GB ya Starlink','Inatumika kwa siku 2','Bora kwa kujaribu huduma'], isFree: true },
+    light: { name: 'Data 5GB', badge: 'Siku 3', desc: 'Inafaa kwa matumizi mepesi na kutumia programu za msingi.', price: 'TSh 2,500', priceClass: '', validity: 'Siku 3', features: ['Data 5GB ya Starlink','Inatumika kwa siku 3','Bora kwa wasafiri'], isFree: false },
+    balanced: { name: 'Data 15GB', badge: 'Siku 7', desc: 'Inafaa kwa matumizi ya wastani, video na kuvinjari kwa wiki.', price: 'TSh 7,000', priceClass: '', validity: 'Siku 7', features: ['Data 15GB ya Starlink','Inatumika kwa siku 7','Bora kwa kazi za mbali'], isFree: false },
+    heavy: { name: 'Data 35GB', badge: 'Siku 14', desc: 'Inafaa kwa watumiaji wakubwa wanaohitaji data nyingi.', price: 'TSh 15,000', priceClass: '', validity: 'Siku 14', features: ['Data 35GB ya Starlink','Inatumika kwa siku 14','Bora kwa video na michezo'], isFree: false },
+    popular: { name: 'Mwezi Bila Kikomo', badge: 'Siku 30', desc: 'Mpango unaopendwa sana! Data bila kikomo kwa mwezi mzima.', price: 'TSh 25,000', priceClass: '', validity: 'Siku 30', features: ['Data bila kikomo ya Starlink','Inatumika kwa siku 30','Thamani bora'], isFree: false },
+    '5g': { name: '5G Mwezi Bila Kikomo', badge: 'Siku 30', desc: '5G ya kiwango cha juu na data bila kikomo.', price: 'TSh 35,000', priceClass: '', validity: 'Siku 30', features: ['5G data bila kikomo','Inatumika kwa siku 30','Kasi ya 5G'], isFree: false }
+  };
+
+  function showDetail(planKey) {
+    const plan = planData[planKey];
+    if (!plan) return;
+    document.getElementById('detailContent').innerHTML = `
+      <div class="detail-header"><span class="name">${plan.name}</span><span class="plan-badge">${plan.badge}</span></div>
+      <div class="detail-desc">${plan.desc}</div>
+      <div class="price-box"><span class="label">GHARAMA</span><span class="value ${plan.priceClass}">${plan.price}</span></div>
+      <div class="validity-box"><span>MUDA</span><span>${plan.validity}</span></div>
+      <ul class="feature-list">${plan.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}</ul>
+      <div class="info-note"><i class="fas fa-info-circle"></i> Utatumia Mixx by Yas kukamilisha malipo.</div>
+      <div class="action-row">
+        <button class="btn btn-outline" onclick="showPage(1)">Ghairi</button>
+        <button class="btn btn-primary" onclick="goToApply('${planKey}')"><i class="fas fa-mobile-alt"></i> Lipa kwa Mixx by Yas</button>
+      </div>`;
+    showPage(2);
+  }
+
+  function goToApply(planKey) {
+    const plan = planData[planKey];
+    const amount = plan.isFree ? 0 : parseInt(plan.price.replace(/[^0-9]/g, ''));
+    window.location.href = '/apply?plan=' + encodeURIComponent(plan.name) + '&amount=' + amount;
+  }
+
+  function showPage(pageNum) {
+    document.getElementById('page1').classList.remove('active');
+    document.getElementById('page2').classList.remove('active');
+    document.getElementById('dot1').classList.remove('active');
+    document.getElementById('dot2').classList.remove('active');
+    if (pageNum === 1) { document.getElementById('page1').classList.add('active'); document.getElementById('dot1').classList.add('active'); document.getElementById('stepLabel').textContent = 'Hatua 1 ya 2 · Mipango'; }
+    else { document.getElementById('page2').classList.add('active'); document.getElementById('dot2').classList.add('active'); document.getElementById('stepLabel').textContent = 'Hatua 2 ya 2 · Maelezo'; }
+  }
+</script>
+
+</body>
+</html>

