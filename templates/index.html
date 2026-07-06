@@ -121,15 +121,17 @@
       </div>
       <div class="section-label">CHAGUA MPANGO WAKO</div>
       <div class="plan-grid">
-        <a href="#" class="plan-card" onclick="showDetail('free')">
+        <!-- 1GB Mini Plan -->
+        <a href="#" class="plan-card" onclick="showDetail('mini')">
           <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
           <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
           <div class="star" style="top:12%;left:8%;animation-delay:0s;"></div><div class="star" style="top:78%;left:85%;animation-delay:0.6s;"></div><div class="star" style="top:32%;right:8%;animation-delay:1.2s;"></div><div class="star" style="top:88%;left:12%;animation-delay:1.8s;"></div>
           <div class="user-type new-users">★ WATUMIAJI WAPYA</div>
-          <div class="plan-name">Data 2.5GB</div><div class="plan-validity">Mpango wa Siku 2</div>
-          <div class="plan-price free-trial">⭐ JARIBIO BURE</div>
+          <div class="plan-name">Data 1GB</div><div class="plan-validity">Mpango wa Siku 1</div>
+          <div class="plan-price"><span class="currency">TSh</span> 1,500</div>
           <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
         </a>
+        <!-- Light Users -->
         <a href="#" class="plan-card" onclick="showDetail('light')">
           <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
           <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
@@ -139,6 +141,7 @@
           <div class="plan-price"><span class="currency">TSh</span> 2,500</div>
           <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
         </a>
+        <!-- Balanced -->
         <a href="#" class="plan-card" onclick="showDetail('balanced')">
           <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
           <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
@@ -148,6 +151,7 @@
           <div class="plan-price"><span class="currency">TSh</span> 7,000</div>
           <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
         </a>
+        <!-- Heavy -->
         <a href="#" class="plan-card" onclick="showDetail('heavy')">
           <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
           <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
@@ -157,6 +161,7 @@
           <div class="plan-price"><span class="currency">TSh</span> 15,000</div>
           <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
         </a>
+        <!-- Popular -->
         <a href="#" class="plan-card popular" onclick="showDetail('popular')" style="border-color: rgba(255, 209, 0, 0.3);">
           <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
           <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
@@ -166,6 +171,7 @@
           <div class="plan-price"><span class="currency">TSh</span> 25,000</div>
           <div class="view-details">Angalia maelezo <i class="fas fa-arrow-right"></i></div>
         </a>
+        <!-- 5G -->
         <a href="#" class="plan-card" onclick="showDetail('5g')">
           <div class="starlink-sat"><div class="sat-body"></div><div class="sat-panel-l"></div><div class="sat-panel-r"></div><div class="sat-dish"></div><div class="sat-glow"></div></div>
           <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
@@ -190,7 +196,7 @@
 
 <script>
   const planData = {
-    free: { name: 'Data 2.5GB', badge: 'Siku 2', desc: 'Njia bora ya kujaribu huduma yetu. Pata data 2.5GB ya kuanza kutumia Starlink.', price: '⭐ JARIBIO BURE', priceClass: 'free-trial', validity: 'Siku 2', features: ['Data 2.5GB ya Starlink','Inatumika kwa siku 2','Bora kwa kujaribu huduma'], isFree: true },
+    mini: { name: 'Data 1GB', badge: 'Siku 1', desc: 'Kifurushi cha haraka kwa mahitaji ya dharura. Pata data 1GB kwa matumizi ya siku moja.', price: 'TSh 1,500', priceClass: '', validity: 'Siku 1', features: ['Data 1GB ya Starlink','Inatumika kwa siku 1','Bora kwa mahitaji ya haraka'], isFree: false },
     light: { name: 'Data 5GB', badge: 'Siku 3', desc: 'Inafaa kwa matumizi mepesi na kutumia programu za msingi.', price: 'TSh 2,500', priceClass: '', validity: 'Siku 3', features: ['Data 5GB ya Starlink','Inatumika kwa siku 3','Bora kwa wasafiri'], isFree: false },
     balanced: { name: 'Data 15GB', badge: 'Siku 7', desc: 'Inafaa kwa matumizi ya wastani, video na kuvinjari kwa wiki.', price: 'TSh 7,000', priceClass: '', validity: 'Siku 7', features: ['Data 15GB ya Starlink','Inatumika kwa siku 7','Bora kwa kazi za mbali'], isFree: false },
     heavy: { name: 'Data 35GB', badge: 'Siku 14', desc: 'Inafaa kwa watumiaji wakubwa wanaohitaji data nyingi.', price: 'TSh 15,000', priceClass: '', validity: 'Siku 14', features: ['Data 35GB ya Starlink','Inatumika kwa siku 14','Bora kwa video na michezo'], isFree: false },
